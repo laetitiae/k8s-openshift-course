@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
   name: test-configmap
 data:
-  replicas: 2
+  param.1: 2
+  param.2: "ho ho ho"
 ---
 apiVersion: v1
 kind: Pod
@@ -13,26 +14,26 @@ spec:
   containers:
     - name: configmap-container
       image: busybox
-      command: [ "/bin/sh", "-c", "echo $(SPECIAL_LEVEL_KEY) $(SPECIAL_TYPE_KEY)" ]
+      command: [ "/bin/sh", "-c", "echo $(PARAM_1) $(PARAM_2)" ]
       env:
-        - name: SPECIAL_LEVEL_KEY
+        - name: PARAM_1
           valueFrom:
             configMapKeyRef:
-              name: special-config
-              key: special.how
-        - name: SPECIAL_TYPE_KEY
+              name: text-configmap
+              key: param.1
+        - name: PARAM_2
           valueFrom:
             configMapKeyRef:
-              name: special-config
-              key: special.type
+              name: test-configmap
+              key: param.2
     - name: volume-configmap-container
       image: busybox
-      command: [ "/bin/sh", "-c", "cat /etc/config/special.how" ]
+      command: [ "/bin/sh", "-c", "cat /etc/config/param.1" ]
       volumeMounts:
       - name: config-volume
         mountPath: /etc/config
   volumes:
     - name: config-volume
       configMap:
-        name: special-config
+        name: test-configmap
   restartPolicy: Never
