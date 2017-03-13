@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ClusterRole
+metadata:
+  name: myClusterRole
+rules:
+- apiGroups:
+  - "extensions"
+  resources:
+  - daemonsets
+  verbs:
+  - '*'
